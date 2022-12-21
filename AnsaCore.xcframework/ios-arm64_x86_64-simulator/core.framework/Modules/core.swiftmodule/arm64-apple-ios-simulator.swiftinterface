@@ -1,0 +1,242 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.7.2 (swiftlang-5.7.2.135.5 clang-1400.0.29.51)
+// swift-module-flags: -target arm64-apple-ios15.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name core
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import Combine
+import Foundation
+import Swift
+import UIKit
+import _Concurrency
+import _StringProcessing
+@_exported import core
+public struct TokenizedCreditCard : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct TokenizedCreditCardMetaData : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct TokenizedCreditCardDtoMetaData : Swift.Codable {
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct UseFundsDto : Swift.Encodable {
+  public let amount: Swift.Int
+  public let currency: Swift.String
+  public let reloadInfo: core.ReloadInfo?
+  public init(amount: Swift.Int, currency: Swift.String, reloadInfo: core.ReloadInfo?)
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct ReloadInfo : Swift.Encodable {
+  public let paymentMethodId: Swift.String
+  public let amount: Swift.Int
+  public let currency: Swift.String
+  public init(paymentMethodId: Swift.String, amount: Swift.Int, currency: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct Customer : Swift.Decodable {
+  public let id: Swift.String
+  public let balance: core.Balance
+  public let email: Swift.String
+  public init(id: Swift.String, balance: core.Balance, email: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Balance : Swift.Decodable {
+  public let amount: Swift.Int
+  public let currency: Swift.String
+  public init(amount: Swift.Int, currency: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+}
+public protocol CardBalanceViewControllerDelegate : AnyObject {
+  func onPaymentCompleted()
+  func onPayWithApplePay()
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class CardBalanceViewController : UIKit.UIViewController {
+  @_Concurrency.MainActor(unsafe) public init(paymentRequest: core.PaymentRequest, delegate: core.CardBalanceViewControllerDelegate)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func viewDidLoad()
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func viewDidAppear(_ animated: Swift.Bool)
+  @objc deinit
+}
+public protocol AddPaymentMethodViewControllerDelegate : AnyObject {
+  func onNewCreditCardAdded()
+}
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class AddPaymentMethodViewController : UIKit.UIViewController {
+  @_Concurrency.MainActor(unsafe) public init(paymentRequest: core.PaymentRequest, delegate: core.AddPaymentMethodViewControllerDelegate?)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func viewDidLoad()
+  @objc deinit
+}
+public struct CreditCardDto : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct CreditCardDtoData : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct AddFundsDto : Swift.Encodable {
+  public let paymentMethodId: Swift.String
+  public let amount: Swift.Int
+  public let currency: Swift.String
+  public init(paymentMethodId: Swift.String, amount: Swift.Int, currency: Swift.String)
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct PaymentMethodResponse : Swift.Decodable {
+  public let paymentMethods: Swift.Array<core.PaymentMethod>
+  public let count: Swift.Int
+  public init(paymentMethods: Swift.Array<core.PaymentMethod>, count: Swift.Int)
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct PaymentMethod : Swift.Decodable {
+  public let id: Swift.String
+  public let type: Swift.String
+  public let card: core.Card
+  public init(id: Swift.String, type: Swift.String, card: core.Card)
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct Card : Swift.Decodable {
+  public let lastFour: Swift.String?
+  public let brand: Swift.String
+  public let fingerprint: Swift.String
+  public init(lastFour: Swift.String?, brand: Swift.String, fingerprint: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct CreatePaymentMethodDto : Swift.Encodable {
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct Funds : Swift.Decodable {
+  public let currentBalance: core.Balance
+  public let timestamp: Swift.String
+  public let transactionId: Swift.String
+  public init(currentBalance: core.Balance, timestamp: Swift.String, transactionId: Swift.String)
+  public init(from decoder: Swift.Decoder) throws
+}
+public struct AnsaCore {
+  public static func initialize(clientSecretKey: Swift.String, _ handler: () -> Swift.Void)
+  public static func handlePaymentAfterApplePay(forCustomerId customerId: Swift.String, amount: Swift.Int, applePayToken: core.ApplePaymentToken, _ handler: @escaping (Swift.Result<Swift.Void, core.AnsaNetworkError>) -> Swift.Void)
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func getCustomer(id: Swift.String) async -> Swift.Result<core.Customer, core.AnsaNetworkError>
+  #endif
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func addFunds(_ funds: core.AddFundsDto, forCustomerId id: Swift.String) async -> Swift.Result<core.Funds, core.AnsaNetworkError>
+  #endif
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func useFunds(_ funds: core.UseFundsDto, forCustomerId id: Swift.String) async -> Swift.Result<core.Funds, core.AnsaNetworkError>
+  #endif
+  #if compiler(>=5.3) && $AsyncAwait
+  public static func getPaymentMethods(forCustomerId id: Swift.String) async -> Swift.Result<core.PaymentMethodResponse, core.AnsaNetworkError>
+  #endif
+}
+public enum AnsaNetworkError : Swift.Error {
+  case noResponse
+  case decode
+  case unexpectedStatusCode
+  case serverError
+  case apiError(_: core.AnsaApiError)
+}
+public struct AnsaApiError : Swift.Decodable, Swift.Error {
+  public var status: Swift.Int?
+  public let type: Swift.String
+  public let message: Swift.String
+  public let code: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+}
+public class PaymentRequest {
+  public var customerId: Swift.String
+  public var totalAmount: Swift.Int
+  public var buttonColorEnabled: UIKit.UIColor
+  public var buttonColorDisabled: UIKit.UIColor
+  public var buttonTitleColorEnabled: UIKit.UIColor
+  public var buttonTitleColorDisabled: UIKit.UIColor
+  public var cardBackgroundColor: UIKit.UIColor
+  public var errorLabelColor: UIKit.UIColor
+  public var hintLabelColor: UIKit.UIColor
+  public var addNewCardText: Swift.String
+  public init()
+  @objc deinit
+}
+public class ApplePaymentToken : Swift.Encodable {
+  public var token: core.PaymentToken
+  public var billingContact: core.BillingContact
+  public var shippingContact: core.ShippingContact
+  public var shippingMethod: core.ShippingMethod
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public class PaymentToken : Swift.Encodable {
+  public var paymentMethod: core.ApplePayPaymentMethod
+  public var transactionIdentifier: Swift.String
+  public var paymentData: core.PaymentData
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public class PaymentData : Swift.Codable {
+  public var data: Swift.String
+  public var signature: Swift.String
+  public var header: core.PaymentHeader
+  public var version: Swift.String
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
+}
+public class PaymentHeader : Swift.Codable {
+  public var publicKeyHash: Swift.String
+  public var ephemeralPublicKey: Swift.String
+  public var transactionId: Swift.String
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+  required public init(from decoder: Swift.Decoder) throws
+}
+public class ApplePayPaymentMethod : Swift.Encodable {
+  public var displayName: Swift.String
+  public var network: Swift.String
+  public var type: Swift.String
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public class BillingContact : Swift.Encodable {
+  public var addressLines: [Swift.String]
+  public var administrativeArea: Swift.String
+  public var country: Swift.String
+  public var countryCode: Swift.String
+  public var familyName: Swift.String
+  public var givenName: Swift.String
+  public var locality: Swift.String
+  public var phoneticFamilyName: Swift.String
+  public var phoneticGivenName: Swift.String
+  public var postalCode: Swift.String
+  public var subAdministrativeArea: Swift.String
+  public var subLocality: Swift.String
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public class ShippingContact : Swift.Encodable {
+  public var addressLines: [Swift.String]
+  public var administrativeArea: Swift.String
+  public var country: Swift.String
+  public var countryCode: Swift.String
+  public var familyName: Swift.String
+  public var givenName: Swift.String
+  public var locality: Swift.String
+  public var phoneticFamilyName: Swift.String
+  public var phoneticGivenName: Swift.String
+  public var postalCode: Swift.String
+  public var subAdministrativeArea: Swift.String
+  public var subLocality: Swift.String
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public class ShippingMethod : Swift.Encodable {
+  public var identifier: Swift.String
+  public var detail: Swift.String
+  public init()
+  @objc deinit
+  public func encode(to encoder: Swift.Encoder) throws
+}
+public struct CreatePaymentMethod : Swift.Decodable {
+  public init(from decoder: Swift.Decoder) throws
+}
